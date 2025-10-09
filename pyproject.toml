@@ -1,0 +1,20 @@
+[project]
+name = "anodex"
+version = "0.1.0"
+description = "CLI Orchestrator for Time-Series Anomaly Explanation & Reporting"
+authors = [{ name = "Gemini" }]
+requires-python = ">=3.9"
+dependencies = [
+    "click",
+    "rich",
+    "numpy",
+    "scikit-learn",
+    "matplotlib",
+    "fpdf2",
+    "TSInterpret",
+    "aeon",
+    "pyod",
+]
+
+[project.scripts]
+anodex = "anodex.cli:cli"

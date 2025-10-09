@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+src/anodex/__init__.py
+src/anodex/__main__.py
+src/anodex/_anomaly.py
+src/anodex/_explain.py
+src/anodex/_io.py
+src/anodex/_plots.py
+src/anodex/_report.py
+src/anodex/_schemas.py
+src/anodex/cli.py
+src/anodex.egg-info/PKG-INFO
+src/anodex.egg-info/SOURCES.txt
+src/anodex.egg-info/dependency_links.txt
+src/anodex.egg-info/entry_points.txt
+src/anodex.egg-info/requires.txt
+src/anodex.egg-info/top_level.txt

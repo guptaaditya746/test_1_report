@@ -1,0 +1,9 @@
+click
+rich
+numpy
+scikit-learn
+matplotlib
+fpdf2
+TSInterpret
+aeon
+pyod

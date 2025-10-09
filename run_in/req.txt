@@ -1,0 +1,7 @@
+run_in/
+├── model.joblib      # Your trained model
+├── X_train.npy       # Training data
+├── X_test.npy        # Test data
+├── y_test.npy        # (Optional) Test labels
+└── features.json     # (Optional) Feature metadata
+
