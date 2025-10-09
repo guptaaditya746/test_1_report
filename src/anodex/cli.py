@@ -96,7 +96,7 @@ def explain(ctx, in_dir, out_dir, idx, cf_engine, lambda_, smooth, delta, max_it
         model, X_train, _, _, _, _ = load_io(in_dir)
         x = np.load(out_dir / "x.npy")
         log.debug(f"Loaded instance 'x' with shape {x.shape} from '{out_dir / 'x.npy'}'")
-        x_cf, history = generate_cf(x, model, X_train, lambda_, smooth, delta, max_iters)
+        x_cf, history = generate_cf(x, model, X_train, max_iters=max_iters, lambda_=lambda_, delta=delta)
 
         np.save(out_dir / "x_cf.npy", x_cf)
         pd.DataFrame(history).to_csv(out_dir / "opt_hist.csv", index=False)
