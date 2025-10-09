@@ -14,7 +14,7 @@ class LstmAutoencoderWrapper:
 
     def decision_function(self, X: np.ndarray) -> np.ndarray:
         """Calculates the raw anomaly score (reconstruction error)."""
-        X_pred = self.model.predict(X, verbose=0)
+        X_pred = self.model.predict(X)
         mae = np.mean(np.abs(X_pred - X), axis=(1, 2))
         return mae
 
