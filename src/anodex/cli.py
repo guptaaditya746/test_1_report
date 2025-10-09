@@ -142,9 +142,13 @@ def report(ctx, in_dir, out_dir, pdf_path):
 
     log.info("Gathering metadata...")
     # Create meta.json
-    p_anom_before = model.predict_proba(x.reshape(1, -1))[0, 1] if x.ndim == 1 else model.predict_proba(x.reshape(1, x.shape[0], x.shape[1]))[0,1]
-    p_anom_after = model.predict_proba(x_cf.reshape(1, -1))[0, 1] if x.ndim == 1 else model.predict_proba(x_cf.reshape(1, x.shape[0], x.shape[1]))[0,1]
-    
+    x_reshaped = np.expand_dims(x, axis=0)
+    x_cf_reshaped = np.expand_dims(x_cf, axis=0)
+
+    p_anom_before = model.predict_proba(x_reshaped)[0, 1]
+    p_anom_after = model.predict_proba(x_cf_reshaped)[0, 1]
+    # --- END: SIMPLIFIED PREDICTION LOGIC ---
+
     packages = {dist.metadata["name"]: dist.version for dist in distributions()}
     env = Environment(python=f"{sys.version_info.major}.{sys.version_info.minor}", packages={
         'ts-interpret': packages.get('ts-interpret', 'not-found'),
@@ -152,9 +156,8 @@ def report(ctx, in_dir, out_dir, pdf_path):
         'sklearn': packages.get('scikit-learn', 'not-found'),
         'pyod': packages.get('pyod', 'not-found'),
     })
-
     data_meta = Data(
-        mode="timeseries" if X_train.ndim == 3 else "tabular",
+        mode="timeseries", # No longer need to check dimensions
         shapes=DataShapes(X_train=list(X_train.shape), X_test=list(X_test.shape)),
         features="features.json" if features else "absent",
         labels_present=y_test is not None

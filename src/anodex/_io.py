@@ -1,4 +1,3 @@
-
 import pathlib
 import joblib
 import numpy as np
@@ -46,6 +45,15 @@ def load_io(in_dir: str):
     model = joblib.load(model_path)
     
     Xtr = np.load(in_dir / "X_train.npy")
+    
+    # --- START: NEW VALIDATION LOGIC ---
+    if Xtr.ndim != 3:
+        raise ValueError(
+            f"X_train.npy has an incorrect shape: {Xtr.shape}. "
+            "The expected shape is 3-dimensional (samples, timesteps, features)."
+        )
+    # --- END: NEW VALIDATION LOGIC ---
+
     Xte = np.load(in_dir / "X_test.npy")
     
     yte_path = in_dir / "y_test.npy"

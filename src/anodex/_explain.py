@@ -63,13 +63,7 @@ def generate_cf(
         wrapped_model,
         (Xtr, y_train_dummy),
         mode="time",
-        epochs=max_iters,
-        lr=learning_rate,
-        lam=lambda_,
-        delta=delta,
-        optimizer=optimizer,
-        smoothness_weight=smoothness_weight,
-        distance=distance,
+        epochs=max_iters
     )
 
     log.info(f"Generating counterfactual with TSEvo for {max_iters} iterations...")
