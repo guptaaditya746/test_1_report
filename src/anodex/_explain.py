@@ -24,7 +24,7 @@ def generate_cf(x, model, Xtr, lambda_, smooth, delta, max_iters):
     # 3. Instantiate the real explainer
     # The `mode` parameter is important for time series data.
     # `pop_size` is a common parameter for evolutionary algorithms, setting a default.
-    explainer = TSEvo(wrapped_model, Xtr, mode='time', pop_size=10)
+    explainer = TSEvo(wrapped_model, Xtr, mode='time')
 
     log.info(f"Generating counterfactual with TSEvo...")
     # 4. Call the explain method
@@ -35,8 +35,8 @@ def generate_cf(x, model, Xtr, lambda_, smooth, delta, max_iters):
     # but are kept here in case your version has a custom API.
     cf, _ = explainer.explain(
         x,
-        target_class=[0], # Assuming the target is the "normal" class (0)
-        epochs=max_iters
+        target_y=[0], # Assuming the target is the "normal" class (0)
+        # epochs=max_iters
     )
 
     # 5. Create a dummy history, as TSEvoCF does not return one directly.

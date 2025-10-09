@@ -72,7 +72,7 @@ def detect(ctx, in_dir, out_dir, selection_policy):
 @click.option('--in', 'in_dir', required=True, type=click.Path(exists=True, file_okay=False), help='Input directory')
 @click.option('--out', 'out_dir', required=True, type=click.Path(exists=True, file_okay=False), help='Output directory')
 @click.option('--idx', type=int, help='Index of the anomaly to explain. Defaults to the one in selected_idx.txt')
-@click.option('--cf-engine', required=True, help='Counterfactual engine')
+@click.option('--cf-engine', default='tsinterpret', show_default=True, help='Counterfactual engine')
 @click.option('--lambda', 'lambda_', type=float, default=0.3, show_default=True, help='Lambda for counterfactual generation')
 @click.option('--smooth', type=float, default=0.05, show_default=True, help='Smoothness for counterfactual generation')
 @click.option('--delta', type=float, default=1.5, show_default=True, help='Delta for counterfactual generation')
