@@ -69,17 +69,15 @@ def detect(ctx, in_dir, out_dir, selection_policy):
         log.exception("Error during detection phase.", extra={"rich_traceback": True})
         raise click.Abort()
 
+
+
 @cli.command()
 @click.option('--in', 'in_dir', required=True, type=click.Path(exists=True, file_okay=False), help='Input directory')
 @click.option('--out', 'out_dir', required=True, type=click.Path(exists=True, file_okay=False), help='Output directory')
 @click.option('--idx', type=int, help='Index of the anomaly to explain. Defaults to the one in selected_idx.txt')
-@click.option('--cf-engine', default='tsinterpret', show_default=True, help='Counterfactual engine')
-@click.option('--lambda', 'lambda_', type=float, default=0.3, show_default=True, help='Lambda for counterfactual generation')
-@click.option('--smooth', type=float, default=0.05, show_default=True, help='Smoothness for counterfactual generation')
-@click.option('--delta', type=float, default=1.5, show_default=True, help='Delta for counterfactual generation')
-@click.option('--max-iters', type=int, default=10, show_default=True, help='Max iterations for counterfactual generation')
+@click.option('--config', 'config_path', required=True, type=click.Path(exists=True, dir_okay=False), help="Path to the TOML configuration file for the explainer.")
 @click.pass_context
-def explain(ctx, in_dir, out_dir, idx, cf_engine, lambda_, smooth, delta, max_iters):
+def explain(ctx, in_dir, out_dir, idx, config_path):
     """Generate a counterfactual explanation for an anomaly."""
     out_dir = pathlib.Path(out_dir)
     if idx is None:
@@ -90,23 +88,27 @@ def explain(ctx, in_dir, out_dir, idx, cf_engine, lambda_, smooth, delta, max_it
             log.error("Run the 'detect' command first or provide an index with --idx.")
             raise click.Abort()
 
-    log.info(f"Explaining anomaly index [bold]{idx}[/] from '{in_dir}' into '{out_dir}'...")
-    log.info(f"CF Engine: [bold cyan]{cf_engine}[/bold cyan], Max Iterations: {max_iters}")
+     # Load and parse the configuration file
+    config = toml.load(config_path)
+    explainer_name = config['explainer']['name']
+    explainer_params = config['explainer'].get('params', {})
+
+    log.info(f"Explaining anomaly index [bold]{idx}[/] using explainer [bold cyan]{explainer_name}[/bold cyan]...")
+
 
     try:
         model, X_train, _, _, _, _ = load_io(in_dir)
         x = np.load(out_dir / "x.npy")
-        log.debug(f"Loaded instance 'x' with shape {x.shape} from '{out_dir / 'x.npy'}'")
-        x_cf, history = generate_cf(x, model, X_train, max_iters=max_iters, lambda_=lambda_, delta=delta, smooth=smooth)
+        
+        # Call the dispatcher with the config values
+        x_cf, history = generate_cf(
+            model, x, X_train, explainer_name, explainer_params
+        )
 
         np.save(out_dir / "x_cf.npy", x_cf)
         pd.DataFrame(history).to_csv(out_dir / "opt_hist.csv", index=False)
-
-        log.debug(f"Saved counterfactual to '{out_dir / 'x_cf.npy'}'")
-        log.debug(f"Saved optimization history to '{out_dir / 'opt_hist.csv'}'")
         log.info("[bold green]Explanation complete![/bold green]")
-
-    except (FileNotFoundError, AttributeError, ValueError) as e:
+    except Exception:
         log.exception("Error during explanation phase.", extra={"rich_traceback": True})
         raise click.Abort()
 
@@ -232,25 +234,20 @@ def report(ctx, in_dir, out_dir, pdf_path):
 @click.option('--out', 'out_dir', required=True, type=click.Path(file_okay=False), help='Output directory')
 @click.option('--select', 'selection_policy', required=True, help='Anomaly selection policy')
 @click.option('--pdf', 'pdf_path', required=True, type=click.Path(dir_okay=False), help='Path to save the PDF report')
-@click.option('--cf-engine', default='tsinterpret', help='Counterfactual engine')
-@click.option('--lambda', 'lambda_', type=float, default=0.3, help='Lambda for counterfactual generation')
-@click.option('--smooth', type=float, default=0.05, help='Smoothness for counterfactual generation')
-@click.option('--delta', type=float, default=1.5, help='Delta for counterfactual generation')
-@click.option('--max-iters', type=int, default=400, help='Max iterations for counterfactual generation')
+@click.option('--config', 'config_path', required=True, type=click.Path(exists=True, dir_okay=False), help="Path to the TOML configuration file for the explainer.")
 @click.pass_context
-def run(ctx, in_dir, out_dir, selection_policy, pdf_path, cf_engine, lambda_, smooth, delta, max_iters):
+@click.pass_context
+def run(ctx, in_dir, out_dir, selection_policy, pdf_path, config_path):
     """Run the full pipeline: detect, explain, and report."""
     log.info("[bold blue]Running full pipeline: Detect -> Explain -> Report[/bold blue]")
     ctx.obj['selection_policy'] = selection_policy
-    ctx.obj['lambda_'] = lambda_
-    ctx.obj['smooth'] = smooth
-    ctx.obj['delta'] = delta
-    ctx.obj['max_iters'] = max_iters
+    # You can store the config in the context if the report needs it
+    ctx.obj['config'] = toml.load(config_path)
 
     ctx.invoke(detect, in_dir=in_dir, out_dir=out_dir, selection_policy=selection_policy)
     selected_idx = ctx.obj.get('selected_idx')
     if selected_idx is not None:
-        ctx.invoke(explain, in_dir=in_dir, out_dir=out_dir, idx=selected_idx, cf_engine=cf_engine, lambda_=lambda_, smooth=smooth, delta=delta, max_iters=max_iters)
+        ctx.invoke(explain, in_dir=in_dir, out_dir=out_dir, idx=selected_idx, config_path=config_path)
         ctx.invoke(report, in_dir=in_dir, out_dir=out_dir, pdf_path=pdf_path)
 
 @cli.command()

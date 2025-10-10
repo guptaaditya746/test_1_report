@@ -1,0 +1,14 @@
+[explainer]
+# The name of the explainer module to use. Must match a file in anodex/explainers/
+name = "tsevo" 
+
+# All parameters for the chosen explainer go in this section.
+[explainer.params]
+max_iters = 500
+target_class = 0
+
+# You could have sections for other explainers too
+# [explainer_shap.params]
+# nsamples = 100
+
+
