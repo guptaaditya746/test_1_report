@@ -1,0 +1,119 @@
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Editor & IDE Files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env/
+.venv/
+venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Machine Learning Artifacts
+logs/
+*.log
+runs/
+output/
+checkpoints/
+*.ckpt
+*.hdf5
+*.json
+*.yaml
+*.yml
+
+# Data Files
+*.csv
+*.tsv
+*.dat
+*.db
+*.sqlite
+*.db3
+*.npz
+*.npy
+
+# Build Artifacts (C/C++, Make, CMake, etc.)
+build/
+bin/
+obj/
+*.exe
+*.out
+*.o
+*.so
+*.a
+*.dll
+*.lib
+*.dylib
+*.app
+
+# C++ project files
+*.vcxproj
+*.sln
+*.user
+*.opensdf
+*.sdf
+*.unsuccessfulbuild
+
+# Compilers (GCC/Clang)
+*.gcno
+*.gcda
+*.gch
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# CLion project files
+cmake-build-debug/
+cmake-build-release/
+
+# Backup & temp files
+*.bak
+*.tmp
+*.swp
+*.temp
+*.orig
+*~
+
+# Test & Coverage
+coverage/
+htmlcov/
+*.cover
+*.coverage
+.coverage.*
+.cache/
+nosetests.xml
+coverage.xml
+*.lcov
+tests/__pycache__/
+
+# Misc
+# Ignore environment config and sensitive keys
+config.json
+secrets.json
+*.key
+*.pem
+
+# Ignore all files in a temp folder
+temp/
+tmp/
+
+# Ignore data folders
+data/
+datasets/
